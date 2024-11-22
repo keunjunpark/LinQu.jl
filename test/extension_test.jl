@@ -7,7 +7,6 @@
     	T =ITensor(A, i,j)
     	ii = rand(1:4)
     	jj = rand(1:6)
-
 		@test T[(i, ii), (j, jj)] == A[ii, jj]
 
 	end
