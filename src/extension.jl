@@ -4,21 +4,20 @@ getindex(T::ITensor, pairs::Tuple{Index, Int}...) = getindex(T, [IndexVal(pair..
 getindex(T::ITensor, pairs::Vector{Tuple{Index, Int}}) = getindex(T, pairs...)
 
 function contract(A::ITensor, B::ITensor, i::Index, j::Index)
-	@assert hasindex(IndexSet(A),i)
-	@assert hasindex(IndexSet(B),j)
-	@assert dim(i) == dim(j)
-	pos_i = 1
-	pos_j = 1
-	while IndexSet(A)[pos_i]!= i
-		pos_i+=1
-	end
-	while IndexSet(B)[pos_j]!= j
-		pos_j+=1
-	end
-	A.inds[pos_i] = j
-	C = A*B
-	A.inds[pos_i] = i
-	return C
+    @assert i in inds(A)
+    @assert j in inds(B)
+    @assert dim(i) == dim(j)
+
+    # Find the positions of the indices
+    pos_i = findfirst(x -> x == i, inds(A))
+    pos_j = findfirst(x -> x == j, inds(B))
+
+    # Replace index i in A with j
+    A_modified = replaceind(A, i => j)
+
+    # Contract tensors
+    C = A_modified * B
+    return C
 end
 
 function clamp(A::ITensor, ind::Index, j::Int)

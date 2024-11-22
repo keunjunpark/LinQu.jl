@@ -15,7 +15,7 @@ function applyLocalGate!(state::MPSState, gate::QGate, actpos::Vector{Int}; kwar
 	# Contract
 	sites = sitesForQubits(state, actpos)
 	inds = siteInds(state, sites)
-	gateITensor = ITensor(gate, IndexSet(prime(inds), inds))
+	gateITensor = ITensor(gate, IndexSet(prime.(inds)..., inds...))
 	qubitITensors = getQubits(state, actpos)
 	product = noprime(gateITensor * prod(qubitITensors))
 
